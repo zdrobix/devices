@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using System.Runtime.Intrinsics.Arm;
 
+
 namespace devices_api.Models.Domain
 {
     public class Device : Entity<int>
