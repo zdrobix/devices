@@ -25,16 +25,15 @@ namespace devices_api.Controllers
         }
 
         // POST : https://localhost:7282/api/user
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> CreateUser([FromBody] UserDTO userDTO)
         {
             var user = new User
             (
                 userDTO.Name,
-                userDTO.Name,
-                PasswordHasher.Encrypt(userDTO.Password),
-                userDTO.Role
+                userDTO.Role,
+                userDTO.Location,
+                PasswordHasher.Encrypt(userDTO.Password)
             );
 
             user = await userRepository.CreateAsync(user);
@@ -68,7 +67,7 @@ namespace devices_api.Controllers
                     Id = user.Id,
                     Name = user.Name,
                     Password = user.Password,
-                    Role = user.Role,
+                    Role = user.Role
                 }
             );
         }
@@ -175,6 +174,7 @@ namespace devices_api.Controllers
                     Name = user.Name,
                     Password = user.Password,
                     Role = user.Role,
+                    Location = user.Location
                 }
             );
         }

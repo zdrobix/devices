@@ -1,6 +1,12 @@
 using devices_api.Data;
+using devices_api.Repo.Implementation;
+using devices_api.Repo.Interface;
+using devices_api.Utils;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using Serilog;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,12 +21,39 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+PasswordHasher.SetPasswordKey(builder.Configuration["PasswordHash"]!);
+TokenService.SetPasswordKey(builder.Configuration["PasswordHash"]! + "" + builder.Configuration["PasswordHash"]!);
 
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<ITokenService, TokenService>();
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var secretKey = Encoding.UTF8.GetBytes(builder.Configuration["PasswordHash"]! + "" + builder.Configuration["PasswordHash"]!);
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = Environment.GetEnvironmentVariable("issuer"),
+        ValidAudience = Environment.GetEnvironmentVariable("audience"),
+        IssuerSigningKey = new SymmetricSecurityKey(secretKey)
+    };
+});
+
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
@@ -32,6 +65,17 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+app.UseCors(options =>
+{
+    options.AllowAnyHeader();
+    options.AllowAnyOrigin();
+    options.AllowAnyMethod();
+});
+
+app.UseAuthentication();
+
+
 
 app.UseAuthorization();
 
