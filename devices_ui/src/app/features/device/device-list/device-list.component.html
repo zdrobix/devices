@@ -1,1 +1,70 @@
-<p>device-list works!</p>
+<div class="container">
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <h1>Device Inventory</h1>
+  </div>
+
+  <hr />
+
+  <ng-container *ngIf="devices$ | async as devices; else loading">
+    <div class="table-responsive">
+      <table class="table table-hover table-striped mt-3">
+        <thead class="table-dark">
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Manufacturer</th>
+            <th>Specs (OS / RAM)</th>
+            <th>Assigned To</th>
+            <th class="text-center"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let device of devices" class="device-row">
+            <td>{{ device.id }}</td>
+            <td>
+              <strong>{{ device.name }}</strong><br />
+              <small class="text-muted">{{ device.type }}</small>
+            </td>
+            <td>{{ device.manufacturer }}</td>
+            <td>
+              {{ device.operatingSystem }} v{{ device.operatingSystemVersion }}<br />
+              <span class="badge bg-secondary">{{ device.ram }} RAM</span>
+            </td>
+            <td>
+              <span *ngIf="device.usedBy; else unassigned" class="text-success">
+                <i class="bi bi-person-fill"></i> {{ device.usedBy.name }}
+              </span>
+              <ng-template #unassigned>
+                <span class="text-muted italic"></span>
+              </ng-template>
+            </td>
+
+            <td class="text-center action-column">
+              <button class="btn btn-outline-primary btn-sm m-1" [routerLink]="['/info-device', device.id]">
+                Info
+              </button>
+              <button class="btn btn-outline-info btn-sm m-1" [routerLink]="['/update-device', device.id]">
+                Update
+              </button>
+              <button class="btn btn-sm m-1" [class.btn-outline-secondary]="!device.usedBy"
+                [class.btn-outline-warning]="device.usedBy"
+                [routerLink]="device.usedBy ? ['/device-assign', device.id] : ['/device-assign', device.id]">
+                {{ device.usedBy ? 'Unassign' : 'Assign' }}
+              </button>
+              <button class="btn btn-outline-danger btn-sm m-1" (click)="onDelete(device.id)">
+                Delete
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-container>
+
+  <ng-template #loading>
+    <div class="text-center mt-5">
+      <div class="spinner-border text-primary" role="status"></div>
+      <p>Loading devices...</p>
+    </div>
+  </ng-template>
+</div>
