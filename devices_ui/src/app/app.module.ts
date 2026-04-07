@@ -1,16 +1,34 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { LoginComponent } from './features/user/login/login.component';
+import { CreateUserComponent } from './features/user/create-user/create-user.component';
+import { DeviceListComponent } from './features/device/device-list/device-list.component';
+import { DeviceAddComponent } from './features/device/device-add/device-add.component';
+import { DeviceUpdateComponent } from './features/device/device-update/device-update.component';
+import { NavbarComponent } from './core/components/navbar/navbar.component';
+import { DeviceAssignComponent } from './features/device/device-assign/device-assign.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    CreateUserComponent,
+    DeviceListComponent,
+    DeviceAddComponent,
+    DeviceUpdateComponent,
+    NavbarComponent,
+    DeviceAssignComponent
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]
