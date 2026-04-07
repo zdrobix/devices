@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,6 +12,8 @@ import { DeviceAddComponent } from './features/device/device-add/device-add.comp
 import { DeviceUpdateComponent } from './features/device/device-update/device-update.component';
 import { NavbarComponent } from './core/components/navbar/navbar.component';
 import { DeviceAssignComponent } from './features/device/device-assign/device-assign.component';
+import { AuthInterceptor } from './core/guards/auth.interceptor';
+import { DeviceInfoComponent } from './features/device/device-info/device-info.component';
 
 @NgModule({
   declarations: [
@@ -22,7 +24,8 @@ import { DeviceAssignComponent } from './features/device/device-assign/device-as
     DeviceAddComponent,
     DeviceUpdateComponent,
     NavbarComponent,
-    DeviceAssignComponent
+    DeviceAssignComponent,
+    DeviceInfoComponent
   ],
   imports: [
     BrowserModule,
@@ -30,7 +33,13 @@ import { DeviceAssignComponent } from './features/device/device-assign/device-as
     FormsModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true
+    }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
