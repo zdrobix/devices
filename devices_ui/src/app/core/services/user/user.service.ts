@@ -25,7 +25,6 @@ export class UserService {
   }
 
   isLoggedIn(): boolean {
-    console.log('Checking if user is logged in:', this.getUserFromSession());
     return localStorage.getItem('jwt_token') != null;
   }
 
@@ -39,15 +38,16 @@ export class UserService {
       );
   }
 
+  getUsers(): Observable<User[]> {
+    return this.http.get<User[]>(`${environment.apiBaseUrl}/api/user`);
+  }
+
   logout(): void {
     localStorage.removeItem('jwt_token');
     sessionStorage.removeItem('user');
     this.currentUserSubject.next(null);
   }
 
-  /*
-  Returns the user stored in the browser's memory, otherwise null.
-  */
   private getUserFromSession(): User | null {
     const userJson = sessionStorage.getItem('user');
     return userJson ? JSON.parse(userJson) : null;
