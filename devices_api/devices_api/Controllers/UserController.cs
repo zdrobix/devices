@@ -66,8 +66,9 @@ namespace devices_api.Controllers
                 {
                     Id = user.Id,
                     Name = user.Name,
-                    Password = user.Password,
-                    Role = user.Role
+                    Password = "******",
+                    Role = user.Role,
+                    Location = user.Location,
                 }
             );
         }
@@ -109,15 +110,22 @@ namespace devices_api.Controllers
         public async Task<IActionResult> GetAllUsers()
         {
             Log.Information("Fetching users");
-            return await userRepository.GetAllAsync() is IEnumerable<UserDTO> users
-                ? Ok(users.Select(user => new UserDTO
-                {
-                    Id = user.Id,
-                    Name = user.Name,
-                    Password = "******",
-                    Role = user.Role,
-                }))
-                : NotFound();
+
+            var users = await userRepository.GetAllAsync();
+
+            if (users == null)
+                return NotFound();
+
+            var userDtos = users.Select(user => new UserDTO
+            {
+                Id = user.Id,
+                Name = user.Name,
+                Password = "******",
+                Role = user.Role,
+                Location = user.Location,
+            });
+
+            return Ok(userDtos);
         }
 
         // DELETE : https://localhost:7282/api/user{id}
