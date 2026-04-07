@@ -12,10 +12,12 @@ namespace devices_api.Controllers
     public class DeviceController : ControllerBase
     {
         private readonly IDeviceRepository deviceRepository;
+        private readonly IUserRepository userRepository;
 
-        public DeviceController(IDeviceRepository deviceRepository)
+        public DeviceController(IDeviceRepository deviceRepository, IUserRepository userRepository)
         {
             this.deviceRepository = deviceRepository;
+            this.userRepository = userRepository;
             Log.Information("DeviceController initialized");
         }
 
@@ -42,7 +44,9 @@ namespace devices_api.Controllers
                 {
                     Id = device.UsedBy.Id,
                     Name = device.UsedBy.Name,
-                    Role = device.UsedBy.Role
+                    Role = device.UsedBy.Role,
+                    Location = device.UsedBy.Location,
+                    Password = "*****"
                 } : null
             });
 
@@ -70,7 +74,7 @@ namespace devices_api.Controllers
         // POST: api/device
         [Authorize]
         [HttpPost]
-        public async Task<IActionResult> CreateDevice([FromBody] DeviceDTO deviceDto)
+        public async Task<IActionResult> CreateDevice([FromBody] AddDeviceRequest deviceDto)
         {
             var device = new Device(
                 deviceDto.Name,
@@ -94,7 +98,7 @@ namespace devices_api.Controllers
         [Authorize]
         [HttpPut]
         [Route("{id:int}")]
-        public async Task<IActionResult> UpdateDevice([FromRoute] int id, [FromBody] DeviceDTO deviceDto)
+        public async Task<IActionResult> UpdateDevice([FromRoute] int id, [FromBody] UpdateDeviceRequest deviceDto)
         {
             Log.Information($"Updating device with id {id}");
             var device = await deviceRepository.GetById(id);
@@ -109,6 +113,16 @@ namespace devices_api.Controllers
             device.Processor = deviceDto.Processor;
             device.RAM = deviceDto.RAM;
             device.Description = deviceDto.Description;
+
+            if (deviceDto.UsedBy != null)
+            {
+                var user = await this.userRepository.GetById(deviceDto.UsedBy.Id);
+                if ( user == null )
+                {
+                    return BadRequest("Invalid user for device.");
+                }
+                device.UsedBy = user;
+            }
 
             device = await deviceRepository.UpdateAsync(device);
 
@@ -134,7 +148,6 @@ namespace devices_api.Controllers
         [Route("ping")]
         public IActionResult Ping() => Ok("pong");
 
-        // Helper method to keep the code DRY
         private static DeviceDTO MapToDTO(Device device)
         {
             return new DeviceDTO
@@ -152,7 +165,9 @@ namespace devices_api.Controllers
                 {
                     Id = device.UsedBy.Id,
                     Name = device.UsedBy.Name,
-                    Role = device.UsedBy.Role
+                    Role = device.UsedBy.Role,
+                    Location = device.UsedBy.Location,
+                    Password = "*****"
                 }
             };
         }
