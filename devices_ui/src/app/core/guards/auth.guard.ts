@@ -1,6 +1,5 @@
-import { Injectable } from '@angular/core';
-import { CanActivate, CanActivateFn, Router, UrlTree } from '@angular/router';
-import { Observable, map } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { CanActivate, Router, UrlTree } from '@angular/router';
 import { UserService } from '../services/user/user.service';
 
 @Injectable({
@@ -8,16 +7,17 @@ import { UserService } from '../services/user/user.service';
 })
 
 export class AuthGuard implements CanActivate {
+  private userService = inject(UserService);
+  private router = inject(Router);
 
-  constructor(private userService: UserService, private router: Router) {}
+  constructor() {} 
 
-  /*
-  Some routes are restricted, and can't be visited unless the user is logged in.
-  If the user is logged in, this method returns an Observable, otherwise a tree, redirecting the user.
-  */
-  canActivate(): Observable<boolean | UrlTree> {
-    return this.userService.getLoggedInUser().pipe(
-      map(user => user ? true : this.router.createUrlTree(['/']))
-    );
+  canActivate(): boolean {
+    if (this.userService.isLoggedIn()) { 
+      return true;
+    } else {
+      this.router.navigate(['/login']);
+      return false;
+    }
   }
 }
