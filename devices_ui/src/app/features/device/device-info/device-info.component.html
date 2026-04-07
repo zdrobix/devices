@@ -1,1 +1,31 @@
-<p>device-info works!</p>
+<div class="container mt-4" style="max-width: 600px;">
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <h2 class="card-title mb-4 text-center">Device Parameters</h2>
+
+      <div class="row mb-2" *ngFor="let param of deviceParams">
+        <div class="col-5 fw-bold text-muted">{{ param.label }}:</div>
+        <div class="col-7">{{ param.value || 'N/A' }}</div>
+      </div>
+
+      <hr class="my-4">
+
+      <div class="mb-3">
+        <label for="genDesc" class="form-label fw-bold">Device Description</label>
+        <textarea 
+          id="genDesc" 
+          class="form-control" 
+          rows="5" 
+          [(ngModel)]="descriptionText" 
+          placeholder="No description yet...">
+        </textarea>
+      </div>
+
+      <div class="d-grid gap-2">
+        <button class="btn btn-info text-white" (click)="generateDescription()">
+          <i class="bi bi-magic me-2"></i>Generate Description
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,1 +1,35 @@
-<p>device-assign works!</p>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+  <div class="card shadow-sm" style="width: 100%; max-width: 400px;">
+    <div class="card-body">
+      <h3 class="text-center mb-4">Assign Device</h3>
+      
+      <div class="mb-4 text-center">
+        <label class="text-muted small d-block">Device Name</label>
+        <span class="h5 text-primary">{{ device?.name }}</span>
+        <hr>
+      </div>
+
+      <form (ngSubmit)="onFormSubmit()">
+        <div class="mb-3">
+          <label for="userSelect" class="form-label fw-bold">Select User</label>
+          <select 
+            class="form-control" 
+            id="userSelect" 
+            name="userSelect" 
+            [(ngModel)]="selectedUserId" 
+            required>
+            <option [value]="0">Unassigned</option>
+            <option *ngFor="let user of users$ | async" [ngValue]="user.id">
+              {{ user.name }} ({{ user.role }})
+            </option>
+          </select>
+        </div>
+
+        <div class="d-grid gap-2">
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-outline-secondary" routerLink="/devices">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
