@@ -4,7 +4,7 @@
     [Password] nvarchar(max) NOT NULL,
     [Location] nvarchar(max) NOT NULL,
     [Role] nvarchar(max) NOT NULL,
-    CONSTRAINT [PK_Users] PRIMARY KEY ([Id])
+    CONSTRAINT [PK_Users] PRIMARY KEY ([Id]);
 
 
 CREATE TABLE [Devices] (
@@ -20,6 +20,6 @@ CREATE TABLE [Devices] (
     [UsedById] int NULL,
     CONSTRAINT [PK_Devices] PRIMARY KEY ([Id]),
     -- Foreign Key Relationship
-    CONSTRAINT [FK_Devices_Users_UsedById] FOREIGN KEY ([UsedById]) REFERENCES [Users] ([Id])
+    CONSTRAINT [FK_Devices_Users_UsedById] FOREIGN KEY ([UsedById]) REFERENCES [Users] ([Id]);
 
 CREATE INDEX [IX_Devices_UsedById] ON [Devices] ([UsedById]);
