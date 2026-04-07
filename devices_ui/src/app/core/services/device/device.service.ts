@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { environment } from 'src/environment/environment';
 import { Device } from '../../models/device.model';
 import { AddDeviceRequest } from '../../models/add-device-request.model';
+import { UpdateDeviceRequest } from '../../models/update-device-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -28,7 +29,7 @@ export class DeviceService {
     return this.http.post<Device>(this.apiUrl, device);
   }
 
-  updateDevice(id: number, device: Device): Observable<Device> {
+  updateDevice(id: number, device: UpdateDeviceRequest): Observable<Device> {
     return this.http.put<Device>(`${this.apiUrl}/${id}`, device);
   }
 
