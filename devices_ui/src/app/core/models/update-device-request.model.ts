@@ -1,7 +1,6 @@
 import { User } from "./user.model";
 
 export interface UpdateDeviceRequest {
-    id: number,
     name: string,
     manufacturer: string,
     type: string,

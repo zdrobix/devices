@@ -8,6 +8,5 @@ export interface AddDeviceRequest {
     operatingSystemVersion: string,
     processor: string,
     ram: string,
-    description: string,
-    usedBy: User | null
+    description: string
 }
