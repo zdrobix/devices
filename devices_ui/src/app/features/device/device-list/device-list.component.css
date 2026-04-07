@@ -1,0 +1,14 @@
+.device-row .action-column .btn {
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease-in-out, visibility 0.2s;
+}
+
+.device-row:hover .action-column .btn {
+  opacity: 1;
+  visibility: visible;
+}
+
+.device-row:hover {
+  background-color: rgba(0, 0, 0, 0.02);
+}
