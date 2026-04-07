@@ -19,7 +19,6 @@ export class DeviceListComponent implements OnInit {
 
   loadDevices() {
     this.devices$ = this.deviceService.getAllDevices();
-    console.log('Loaded devices:', this.devices$.forEach(device => console.log(device)));
   }
 
   onDelete(id: number) {
