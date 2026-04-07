@@ -40,14 +40,14 @@
             </td>
 
             <td class="text-center action-column">
-              <button class="btn btn-outline-primary btn-sm m-1" [routerLink]="['/info-device', device.id]">
+              <button class="btn btn-outline-primary btn-sm m-1" [routerLink]="['/device-info', device.id]">
                 Info
               </button>
-              <button class="btn btn-outline-info btn-sm m-1" [routerLink]="['/update-device', device.id]">
+              <button class="btn btn-outline-info btn-sm m-1" [routerLink]="['/device-update', device.id]">
                 Update
               </button>
-              <button class="btn btn-sm m-1" [class.btn-outline-secondary]="!device.usedBy"
-                [class.btn-outline-warning]="device.usedBy"
+              <button class="btn btn-sm m-1" [class.btn-outline-warning]="!device.usedBy"
+                [class.btn-outline-secondary]="device.usedBy"
                 [routerLink]="device.usedBy ? ['/device-assign', device.id] : ['/device-assign', device.id]">
                 {{ device.usedBy ? 'Unassign' : 'Assign' }}
               </button>
