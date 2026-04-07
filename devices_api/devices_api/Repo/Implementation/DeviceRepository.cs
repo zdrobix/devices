@@ -1,10 +1,11 @@
 ﻿using devices_api.Data;
 using devices_api.Models.Domain;
+using devices_api.Repo.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace devices_api.Repo.Implementation
 {
-    public class DeviceRepository
+    public class DeviceRepository : IDeviceRepository
     {
         private readonly ApplicationDbContext dbContext;
 
