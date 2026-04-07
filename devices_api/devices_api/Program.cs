@@ -31,6 +31,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+builder.Services.AddScoped<IDeviceRepository, DeviceRepository>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 
 builder.Services.AddAuthentication(options =>
@@ -40,6 +41,7 @@ builder.Services.AddAuthentication(options =>
 })
 .AddJwtBearer(options =>
 {
+    var jwtSettings = builder.Configuration.GetSection("JwtSettings");
     var secretKey = Encoding.UTF8.GetBytes(builder.Configuration["PasswordHash"]! + "" + builder.Configuration["PasswordHash"]!);
     options.TokenValidationParameters = new TokenValidationParameters
     {
@@ -47,8 +49,8 @@ builder.Services.AddAuthentication(options =>
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = Environment.GetEnvironmentVariable("issuer"),
-        ValidAudience = Environment.GetEnvironmentVariable("audience"),
+        ValidIssuer = jwtSettings["Issuer"],
+        ValidAudience = jwtSettings["Audience"],
         IssuerSigningKey = new SymmetricSecurityKey(secretKey)
     };
 });
@@ -64,8 +66,6 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
-
 app.UseCors(options =>
 {
     options.AllowAnyHeader();
@@ -73,12 +73,9 @@ app.UseCors(options =>
     options.AllowAnyMethod();
 });
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
-
-
-
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();
