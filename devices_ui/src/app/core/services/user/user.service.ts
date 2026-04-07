@@ -24,6 +24,11 @@ export class UserService {
     return this.user$;
   }
 
+  isLoggedIn(): boolean {
+    console.log('Checking if user is logged in:', this.getUserFromSession());
+    return localStorage.getItem('jwt_token') != null;
+  }
+
   login (request: LoginRequest) : Observable<{token: string, user: User}> {
     return this.http.post<{token: string, user: User}>(`${environment.apiBaseUrl}/api/user/login`, request)
       .pipe(
