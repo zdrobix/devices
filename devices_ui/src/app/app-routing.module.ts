@@ -5,12 +5,14 @@ import { DeviceListComponent } from './features/device/device-list/device-list.c
 import { DeviceAddComponent } from './features/device/device-add/device-add.component';
 import { DeviceAssignComponent } from './features/device/device-assign/device-assign.component';
 import { AuthGuard } from './core/guards/auth.guard';
+import { DeviceUpdateComponent } from './features/device/device-update/device-update.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, runGuardsAndResolvers: 'always'},
   { path: 'devices', component: DeviceListComponent, canActivate: [AuthGuard]},
-  { path: 'add-device', component: DeviceAddComponent, canActivate: [AuthGuard]},
-  { path: 'assign-device', component: DeviceAssignComponent, canActivate: [AuthGuard]},
+  { path: 'device-add', component: DeviceAddComponent, canActivate: [AuthGuard]},
+  { path: 'device-update', component: DeviceUpdateComponent, canActivate: [AuthGuard]},
+  { path: 'device-assign', component: DeviceAssignComponent, canActivate: [AuthGuard]},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 

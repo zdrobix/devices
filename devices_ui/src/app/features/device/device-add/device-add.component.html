@@ -1,1 +1,53 @@
-<p>device-add works!</p>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh; padding: 20px 0;">
+  <div class="container" style="max-width: 450px;">
+    <h1 class="text-center mb-4">Add Device</h1>
+    <form #form="ngForm" (ngSubmit)="onFormSubmit()">
+      
+      <div class="mb-3">
+        <input type="text" class="form-control" id="deviceName" name="deviceName" 
+               placeholder="Device Name" required [(ngModel)]="model.name" />
+      </div>
+
+      <div class="mb-3">
+        <input type="text" class="form-control" id="manufacturer" name="manufacturer" 
+               placeholder="Manufacturer" required [(ngModel)]="model.manufacturer" />
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <input type="text" class="form-control" id="type" name="type" 
+                 placeholder="Type (e.g. Tablet)" required [(ngModel)]="model.type" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <input type="text" class="form-control" id="ram" name="ram" 
+                 placeholder="RAM (e.g. 8GB)" required [(ngModel)]="model.ram" />
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-6 mb-3">
+          <input type="text" class="form-control" id="os" name="os" 
+                 placeholder="OS" required [(ngModel)]="model.operatingSystem" />
+        </div>
+        <div class="col-md-6 mb-3">
+          <input type="text" class="form-control" id="osVersion" name="osVersion" 
+                 placeholder="OS Version" required [(ngModel)]="model.operatingSystemVersion" />
+        </div>
+      </div>
+
+      <div class="mb-3">
+        <input type="text" class="form-control" id="processor" name="processor" 
+               placeholder="Processor" required [(ngModel)]="model.processor" />
+      </div>
+
+      <div class="mb-3">
+        <textarea class="form-control" id="description" name="description" 
+                  placeholder="Description" rows="3" [(ngModel)]="model.description"></textarea>
+      </div>
+
+      <div class="d-grid">
+        <button type="submit" [disabled]="!form.valid" class="btn btn-primary">Add Device</button>
+      </div>
+    </form>
+  </div>
+</div>

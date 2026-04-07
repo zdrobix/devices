@@ -23,7 +23,9 @@ namespace devices_api.Repo.Implementation
 
         public Task<Device> DeleteAsync(int id)
         {
-            var deleted = dbContext.Devices.FirstOrDefault(d => d.Id == id);
+            var deleted = dbContext.Devices
+                .Include(u => u.UsedBy)
+                .FirstOrDefault(d => d.Id == id);
             if (deleted == null)
                 throw new ArgumentNullException(nameof(deleted), "Device not found");
             dbContext.Devices.Remove(deleted);
@@ -32,11 +34,15 @@ namespace devices_api.Repo.Implementation
         }
 
         public async Task<IEnumerable<Device>> GetAllAsync() =>
-            await dbContext.Devices.ToListAsync();
+            await dbContext.Devices
+            .Include(u => u.UsedBy)
+            .ToListAsync();
 
         public async Task<Device?> GetById(int id)
         {
-            var Device = await dbContext.Devices.FindAsync(id);
+            var Device = await dbContext.Devices
+                .Include(u => u.UsedBy)
+                .FirstOrDefaultAsync(u => u.Id == id);
             return Device;
         }
 
