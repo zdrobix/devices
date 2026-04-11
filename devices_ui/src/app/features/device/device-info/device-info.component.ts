@@ -1,21 +1,28 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DeviceService } from 'src/app/core/services/device/device.service';
 import { Device } from 'src/app/core/models/device.model';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-device-info',
   templateUrl: './device-info.component.html',
   styleUrls: ['./device-info.component.css']
 })
-export class DeviceInfoComponent implements OnInit {
+export class DeviceInfoComponent implements OnInit, OnDestroy {
   device?: Device;
   descriptionText: string = '';
+  isLoadingAi: boolean = false; 
+  descriptionSubscription?: Subscription;
 
   constructor(
     private route: ActivatedRoute,
-    private deviceService: DeviceService
+    private deviceService: DeviceService,
   ) {}
+
+  ngOnDestroy(): void {
+    this.descriptionSubscription?.unsubscribe();
+  }
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
@@ -44,9 +51,14 @@ export class DeviceInfoComponent implements OnInit {
 
   generateDescription() {
     if (!this.device) return;
-
-    const generated = `This ${this.device.manufacturer} ${this.device.type} is powered by an ${this.device.processor} processor and ${this.device.ram} of RAM. It currently runs ${this.device.operatingSystem} ${this.device.operatingSystemVersion}.`;
+    this.isLoadingAi = true;
+    this.descriptionText = 'Generating description...';
     
-    this.descriptionText = generated;
+    this.descriptionSubscription =  this.deviceService.describeDevice(this.device.id).subscribe({
+      next: (response) => {
+        this.descriptionText = response;
+        this.isLoadingAi = false;
+      }
+    });
   }
 }
