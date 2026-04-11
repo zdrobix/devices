@@ -7,6 +7,7 @@ import { DeviceAssignComponent } from './features/device/device-assign/device-as
 import { AuthGuard } from './core/guards/auth.guard';
 import { DeviceUpdateComponent } from './features/device/device-update/device-update.component';
 import { DeviceInfoComponent } from './features/device/device-info/device-info.component';
+import { CreateUserComponent } from './features/user/create-user/create-user.component';
 
 const routes: Routes = [
   { path: 'login', component: LoginComponent, runGuardsAndResolvers: 'always'},
@@ -15,6 +16,7 @@ const routes: Routes = [
   { path: 'device-update/:id', component: DeviceUpdateComponent, canActivate: [AuthGuard]},
   { path: 'device-assign/:id', component: DeviceAssignComponent, canActivate: [AuthGuard]},
   { path: 'device-info/:id', component: DeviceInfoComponent, canActivate: [AuthGuard]},
+  { path: 'signup', component: CreateUserComponent},
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
 
