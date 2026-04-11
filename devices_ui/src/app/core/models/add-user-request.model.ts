@@ -1,4 +1,4 @@
-export interface AddUser {
+export interface AddUserRequest {
     name: string,
     role: string,
     location: string,

@@ -5,9 +5,67 @@
 
   <hr />
 
-  <ng-container *ngIf="devices$ | async as devices; else loading">
-    <div class="table-responsive">
-      <table class="table table-hover table-striped mt-3">
+  <div class="row g-2 mb-3 align-items-center">
+    <div class="col-12 col-md-4">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by name or manufacturer…"
+        [formControl]="searchControl"
+      />
+    </div>
+    <div class="col-6 col-md-2">
+      <select class="form-select" [formControl]="typeFilter">
+        <option value="">All types</option>
+        <option *ngFor="let t of deviceTypes" [value]="t">{{ t }}</option>
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <select class="form-select" [formControl]="osFilter">
+        <option value="">All OS</option>
+        <option *ngFor="let os of operatingSystems" [value]="os">{{ os }}</option>
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <select class="form-select" [formControl]="assignmentFilter">
+        <option value="">All assignments</option>
+        <option value="assigned">Assigned</option>
+        <option value="unassigned">Unassigned</option>
+      </select>
+    </div>
+    <div class="col-6 col-md-2">
+      <button class="btn btn-outline-secondary w-100" (click)="clearFilters()">
+        Clear filters
+      </button>
+    </div>
+  </div>
+
+  <div class="mb-2" *ngIf="activeFilterCount > 0">
+    <span class="badge bg-light text-dark border me-1" *ngIf="searchControl.value">
+      Search: "{{ searchControl.value }}"
+    </span>
+    <span class="badge bg-light text-dark border me-1" *ngIf="typeFilter.value">
+      Type: {{ typeFilter.value }}
+    </span>
+    <span class="badge bg-light text-dark border me-1" *ngIf="osFilter.value">
+      OS: {{ osFilter.value }}
+    </span>
+    <span class="badge bg-light text-dark border me-1" *ngIf="assignmentFilter.value">
+      {{ assignmentFilter.value | titlecase }}
+    </span>
+  </div>
+
+  <ng-container *ngIf="filteredDevices$ | async as devices; else loading">
+    <p class="text-muted small" *ngIf="totalDevices$ | async as total">
+      Showing {{ devices.length }} of {{ total }} devices
+    </p>
+
+    <div *ngIf="devices.length === 0" class="alert alert-info">
+      No devices match your current filters.
+    </div>
+
+    <div class="table-responsive" *ngIf="devices.length > 0">
+      <table class="table table-hover table-bordered mt-3">
         <thead class="table-dark">
           <tr>
             <th>ID</th>
@@ -35,10 +93,9 @@
                 <i class="bi bi-person-fill"></i> {{ device.usedBy.name }}
               </span>
               <ng-template #unassigned>
-                <span class="text-muted italic"></span>
+                <span class="text-muted fst-italic">Unassigned</span>
               </ng-template>
             </td>
-
             <td class="text-center action-column">
               <button class="btn btn-outline-primary btn-sm m-1" [routerLink]="['/device-info', device.id]">
                 Info
@@ -46,9 +103,11 @@
               <button class="btn btn-outline-info btn-sm m-1" [routerLink]="['/device-update', device.id]">
                 Update
               </button>
-              <button class="btn btn-sm m-1" [class.btn-outline-warning]="!device.usedBy"
+              <button
+                class="btn btn-sm m-1"
+                [class.btn-outline-warning]="!device.usedBy"
                 [class.btn-outline-secondary]="device.usedBy"
-                [routerLink]="device.usedBy ? ['/device-assign', device.id] : ['/device-assign', device.id]">
+                [routerLink]="['/device-assign', device.id]">
                 {{ device.usedBy ? 'Unassign' : 'Assign' }}
               </button>
               <button class="btn btn-outline-danger btn-sm m-1" (click)="onDelete(device.id)">
@@ -64,7 +123,7 @@
   <ng-template #loading>
     <div class="text-center mt-5">
       <div class="spinner-border text-primary" role="status"></div>
-      <p>Loading devices...</p>
+      <p>Loading devices…</p>
     </div>
   </ng-template>
 </div>

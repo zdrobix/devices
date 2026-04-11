@@ -4,6 +4,7 @@ import { User } from '../../models/user.model';
 import { LoginRequest } from '../../models/login-request.mode';
 import { environment } from 'src/environment/environment';
 import { HttpClient } from '@angular/common/http';
+import { AddUserRequest } from '../../models/add-user-request.model';
 
 @Injectable({
   providedIn: 'root'
@@ -40,6 +41,10 @@ export class UserService {
 
   getUsers(): Observable<User[]> {
     return this.http.get<User[]>(`${environment.apiBaseUrl}/api/user`);
+  }
+
+  createUser(model: AddUserRequest): Observable<User> {
+    return this.http.post<User>(`${environment.apiBaseUrl}/api/user`, model);
   }
 
   logout(): void {

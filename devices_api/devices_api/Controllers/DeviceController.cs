@@ -1,9 +1,12 @@
-﻿using devices_api.Models.DTO;
-using devices_api.Models.Domain;
+﻿using devices_api.Models.Domain;
+using devices_api.Models.DTO;
 using devices_api.Repo.Interface;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Serilog;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Text.Json;
 
 namespace devices_api.Controllers
 {
@@ -13,11 +16,19 @@ namespace devices_api.Controllers
     {
         private readonly IDeviceRepository deviceRepository;
         private readonly IUserRepository userRepository;
+        private readonly IHttpClientFactory _httpClientFactory;
+        private readonly IConfiguration _config;
 
-        public DeviceController(IDeviceRepository deviceRepository, IUserRepository userRepository)
+        public DeviceController(
+            IDeviceRepository deviceRepository, 
+            IUserRepository userRepository,
+            IHttpClientFactory httpClientFactory,
+            IConfiguration configuration)
         {
             this.deviceRepository = deviceRepository;
             this.userRepository = userRepository;
+            this._httpClientFactory = httpClientFactory;
+            this._config = configuration;
             Log.Information("DeviceController initialized");
         }
 
@@ -141,6 +152,47 @@ namespace devices_api.Controllers
             if (device == null) return NotFound();
 
             return Ok(MapToDTO(device));
+        }
+
+        //GET: api/device/{id}/describe
+        [Authorize]
+        [HttpGet("describe/{id:int}")]
+        public async Task<IActionResult> DescribeDevice([FromRoute] int id)
+        {
+            var device = await this.deviceRepository.GetById(id);
+            if (device == null) return NotFound();
+            string prompt = $"Give me a technical description for the device: {device.ToString()} . I expect nothing else but the description of the device, under 300 words.2";
+
+            var client = _httpClientFactory.CreateClient();
+            var apiKey = _config["HuggingFace:ApiKey"];
+
+            var requestBody = new
+            {
+                model = "zai-org/GLM-5.1",
+                messages = new[]
+                {
+                    new { role = "user", content = prompt }
+                }
+            };
+            var jsonPayload = JsonSerializer.Serialize(requestBody);
+            var content = new StringContent(jsonPayload, Encoding.UTF8, "application/json");
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
+
+            var modelUrl = _config["HuggingFace:ModelUrl"];
+            var response = await client.PostAsync(modelUrl, content);
+
+            var result = await response.Content.ReadAsStringAsync();
+            Log.Information($"HuggingFace raw response: {result}"); 
+
+            using var doc = JsonDocument.Parse(result);
+            var text = doc.RootElement
+                .GetProperty("choices")[0]
+                .GetProperty("message")
+                .GetProperty("content")
+                .GetString();
+
+            return Ok(text);
         }
 
         // GET: api/device/ping
