@@ -51,5 +51,11 @@ namespace devices_api.Models.Domain
             UsedBy = null!;
         }
 
+        public override string ToString()
+        {
+            return $"Device: {Name} ({Manufacturer} {Type}). " +
+           $"Specs: Running {OperatingSystem} {OperatingSystemVersion ?? "N/A"}, " +
+           $"Processor: {Processor ?? "Unknown"}, RAM: {RAM ?? "Unknown"}.";
+        }
     }
 }
