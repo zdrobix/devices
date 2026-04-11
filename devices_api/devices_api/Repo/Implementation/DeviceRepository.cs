@@ -46,9 +46,18 @@ namespace devices_api.Repo.Implementation
             return Device;
         }
 
-        public Task<Device?> UpdateAsync(Device Device)
+        public async Task<Device?> UpdateAsync(Device Device)
         {
-            throw new NotImplementedException();
+            var existingDevice = await dbContext.Devices
+            .Include(u => u.UsedBy)
+            .FirstOrDefaultAsync(u => u.Id == Device.Id);
+
+            if (existingDevice == null)
+                return null;
+
+            dbContext.Entry(existingDevice).CurrentValues.SetValues(Device);
+            await dbContext.SaveChangesAsync();
+            return existingDevice;
         }
     }
 }
